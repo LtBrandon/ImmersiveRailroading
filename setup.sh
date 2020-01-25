@@ -13,7 +13,7 @@ fi
 rm -rf ./UniversalModCore
 rm -rf ./ImmersiveRailroadingIntegration
 
-git clone --branch $branch ${gitPfx}TeamOpenIndustry/UniversalModCore.git
+git clone --branch forge_1.12.2_debug_passenger_info ${gitPfx}TeamOpenIndustry/UniversalModCore.git
 git clone --branch $branch ${gitPfx}TeamOpenIndustry/ImmersiveRailroadingIntegration.git
 
 ./UniversalModCore/template/setup.sh $branch immersiverailroading ImmersiveRailroading 1.7.2 cam72cam.immersiverailroading.ImmersiveRailroading
