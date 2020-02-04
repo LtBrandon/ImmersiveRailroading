@@ -34,11 +34,11 @@ public class TileRailBase extends BlockEntityTrackTickable implements IRedstoneP
 	private Vec3i parent;
 	private float bedHeight = 0;
 	private float railHeight = 0;
-	private Augment augment; 
+	private Augment augment;
 	private String augmentFilterID;
 	private int snowLayers = 0;
 	protected boolean flexible = false;
-	private boolean willBeReplaced = false; 
+	private boolean willBeReplaced = false;
 	private TagCompound replaced;
 	private boolean skipNextRefresh = false;
 	public ItemStack railBedCache = null;
@@ -87,7 +87,7 @@ public class TileRailBase extends BlockEntityTrackTickable implements IRedstoneP
 	public float getRailHeight() {
 		return this.railHeight;
 	}
-	
+
 	public void setAugment(Augment augment) {
 		this.augment = augment;
 		setAugmentFilter(null);
@@ -133,7 +133,7 @@ public class TileRailBase extends BlockEntityTrackTickable implements IRedstoneP
 	public float getFullHeight() {
 		return this.bedHeight + this.snowLayers / 8.0f;
 	}
-	
+
 	public boolean handleSnowTick() {
 		if (this.snowLayers < (ConfigDebug.deepSnow ? 8 : 1)) {
 			this.snowLayers += 1;
@@ -157,11 +157,11 @@ public class TileRailBase extends BlockEntityTrackTickable implements IRedstoneP
 	public void setParent(Vec3i pos) {
 		this.parent = pos.subtract(this.pos);
 	}
-	
+
 	public boolean isFlexible() {
 		return this.flexible || !(this instanceof TileRail);
 	}
-	
+
 	public ItemStack getRenderRailBed() {
 		if (railBedCache == null) {
 			TileRail pt = this.getParentTile();
@@ -171,7 +171,7 @@ public class TileRailBase extends BlockEntityTrackTickable implements IRedstoneP
 		}
 		return railBedCache;
 	}
-	
+
 	@Override
 	public void writeUpdate(TagCompound nbt) {
 		if (this.getRenderRailBed() != null) {
@@ -203,7 +203,7 @@ public class TileRailBase extends BlockEntityTrackTickable implements IRedstoneP
 			clientLastTankAmount = this.augmentTank.getContents().getAmount();
 		}
 	}
-	
+
 	@Override
 	public void load(TagCompound nbt) {
 		int version = 0;
@@ -308,14 +308,14 @@ public class TileRailBase extends BlockEntityTrackTickable implements IRedstoneP
 	@Override
 	public boolean shouldRefresh(net.minecraft.world.World world, net.minecraft.util.math.BlockPos pos, net.minecraft.block.state.IBlockState oldState, net.minecraft.block.state.IBlockState newState) {
 		// This works around a hack where Chunk does a removeTileEntity directly after calling breakBlock
-		// We have already removed the original TE and are replacing it with one which goes with a new block 
+		// We have already removed the original TE and are replacing it with one which goes with a new block
 		if (this.skipNextRefresh ) {
 			return false;
 		}
 		return super.shouldRefresh(world, pos, oldState, newState);
 	}
 	*/
-	
+
 	// Called before flex track replacement
 	public void setWillBeReplaced(boolean value) {
 		this.willBeReplaced = value;
@@ -430,21 +430,20 @@ public class TileRailBase extends BlockEntityTrackTickable implements IRedstoneP
 		}
 		return nextPos;
 	}
-	
+
 	/*
 	 * Capabilities tie ins
 	 */
 
-	private Vec3d bbMin;
-	private Vec3d bbMax;
-	public <T extends EntityRollingStock> T getStockNearBy(Class<T> type){
+	private Vec3d stockCheckPos;
+    public <T extends EntityRollingStock> T getStockNearBy(Class<T> type) {
+        if (stockCheckPos == null) {
+            stockCheckPos = new Vec3d(this.pos.up(2));
+        }
+
 		return world.getEntities((T stock) -> {
 			if (augmentFilterID == null || augmentFilterID.equals(stock.getDefinitionID())) {
-				if (bbMin == null) {
-					bbMax = new Vec3d(this.pos.up(3).east().north()).max(new Vec3d(this.pos.south().west()));
-					bbMin = new Vec3d(this.pos.up(3).east().north()).min(new Vec3d(this.pos.south().west()));
-				}
-				return stock.getBounds().intersects(bbMin, bbMax);
+				return stock.getBounds().contains(stockCheckPos);
 			}
 			return false;
 		}, type).stream().findFirst().orElse(null);
@@ -520,9 +519,9 @@ public class TileRailBase extends BlockEntityTrackTickable implements IRedstoneP
 		if (this.world.isClient) {
 			return;
 		}
-		
+
 		ticksExisted += 1;
-		
+
 		if (ConfigDebug.snowMeltRate != 0 && this.snowLayers != 0) {
 			if ((int)(Math.random() * ConfigDebug.snowMeltRate * 10) == 0) {
 				if (!world.isPrecipitating()) {
@@ -530,12 +529,12 @@ public class TileRailBase extends BlockEntityTrackTickable implements IRedstoneP
 				}
 			}
 		}
-		
+
 		if (ticksExisted > 1 && (ticksExisted % (20 * 5) == 0 || blockUpdate)) {
 			// Double check every 5 seconds that the master is not gone
 			// Wont fire on first due to incr above
 			blockUpdate = false;
-			
+
 
 			if (this.getParent() == null || !world.isBlockLoaded(this.getParent())) {
 				return;
@@ -548,7 +547,7 @@ public class TileRailBase extends BlockEntityTrackTickable implements IRedstoneP
 				}
 				return;
 			}
-			
+
 			if (Config.ConfigDamage.requireSolidBlocks && this instanceof TileRail) {
 				double floating = ((TileRail)this).percentFloating();
 				if (floating > ConfigBalance.trackFloatingPercent) {
@@ -559,7 +558,7 @@ public class TileRailBase extends BlockEntityTrackTickable implements IRedstoneP
 				}
 			}
 		}
-		
+
 		if (this.augment == null) {
 			return;
 		}
@@ -631,7 +630,7 @@ public class TileRailBase extends BlockEntityTrackTickable implements IRedstoneP
 					}
 				}
 			}
-				
+
 				break;
 			case WATER_TROUGH:
 				/*
@@ -746,7 +745,7 @@ public class TileRailBase extends BlockEntityTrackTickable implements IRedstoneP
 	public double getTankLevel() {
 		return this.augmentTank == null ? 0 : (double)this.augmentTank.getContents().getAmount() / this.augmentTank.getCapacity();
 	}
-	
+
 	private static int waterPressureFromSpeed(double speed) {
 		if (speed < 0) {
 			return 0;
