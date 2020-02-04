@@ -3,6 +3,7 @@ package cam72cam.immersiverailroading.tile;
 import cam72cam.immersiverailroading.Config;
 import cam72cam.immersiverailroading.Config.ConfigBalance;
 import cam72cam.immersiverailroading.Config.ConfigDebug;
+import cam72cam.immersiverailroading.Config.ConfigPerformance;
 import cam72cam.immersiverailroading.IRBlocks;
 import cam72cam.immersiverailroading.IRItems;
 import cam72cam.immersiverailroading.ImmersiveRailroading;
@@ -35,6 +36,8 @@ public class TileRailBase extends BlockEntityTrackTickable implements IRedstoneP
 	private float bedHeight = 0;
 	private float railHeight = 0;
 	private Augment augment;
+	private int augmentUpdateTicks = 1;
+	private int ticksSinceLastAugmentUpdate = 0;
 	private String augmentFilterID;
 	private int snowLayers = 0;
 	protected boolean flexible = false;
@@ -90,7 +93,29 @@ public class TileRailBase extends BlockEntityTrackTickable implements IRedstoneP
 
 	public void setAugment(Augment augment) {
 		this.augment = augment;
-		setAugmentFilter(null);
+        setAugmentFilter(null);
+
+		switch (this.augment) {
+		case DETECTOR:
+			this.augmentUpdateTicks = ConfigPerformance.detectorAugmentUpdateTicks;
+        case FLUID_LOADER:
+            this.augmentUpdateTicks = ConfigPerformance.fluidAugmentUpdateTicks;
+        case FLUID_UNLOADER:
+            this.augmentUpdateTicks = ConfigPerformance.fluidAugmentUpdateTicks;
+        case WATER_TROUGH:
+			this.augmentUpdateTicks = ConfigPerformance.fluidAugmentUpdateTicks;
+        case ITEM_LOADER:
+            this.augmentUpdateTicks = ConfigPerformance.itemAugmentUpdateTicks;
+		case ITEM_UNLOADER:
+			this.augmentUpdateTicks = ConfigPerformance.itemAugmentUpdateTicks;
+		case LOCO_CONTROL:
+			this.augmentUpdateTicks = ConfigPerformance.controlAugmentUpdateTicks;
+		case COUPLER:
+            this.augmentUpdateTicks = ConfigPerformance.couplerAugmentUpdateTicks;
+        default:
+            this.augmentUpdateTicks = 1;
+		}
+
 		this.markDirty();
 	}
 	public boolean setAugmentFilter(String definitionID) {
@@ -559,9 +584,18 @@ public class TileRailBase extends BlockEntityTrackTickable implements IRedstoneP
 			}
 		}
 
-		if (this.augment == null) {
-			return;
-		}
+        if (this.augment == null) {
+            return;
+        }
+
+        if (this.augmentUpdateTicks > 1) {
+            if (this.ticksSinceLastAugmentUpdate < this.augmentUpdateTicks) {
+                this.ticksSinceLastAugmentUpdate++;
+                return;
+            }
+
+            this.ticksSinceLastAugmentUpdate = 0;
+        }
 
 		try {
 			switch (this.augment) {
@@ -603,11 +637,11 @@ public class TileRailBase extends BlockEntityTrackTickable implements IRedstoneP
 				if (stock == null) {
 					break;
 				}
-				augmentTank.tryFill(stock.theTank, 100, false);
+				augmentTank.tryFill(stock.theTank, 100 * this.augmentUpdateTicks, false);
                 for (Facing side : Facing.values()) {
                 	ITank tank = world.getTank(pos.offset(side));
                 	if (tank != null) {
-						stock.theTank.tryDrain(tank, 100, false);
+						stock.theTank.tryDrain(tank, 100 * this.augmentUpdateTicks, false);
 					}
 				}
 			}
@@ -622,11 +656,11 @@ public class TileRailBase extends BlockEntityTrackTickable implements IRedstoneP
 					break;
 				}
 
-				augmentTank.tryDrain(stock.theTank, 100, false);
+				augmentTank.tryDrain(stock.theTank, 100 * this.augmentUpdateTicks, false);
                 for (Facing side : Facing.values()) {
                     ITank tank = world.getTank(pos.offset(side));
                     if (tank != null) {
-						stock.theTank.tryFill(tank, 100, false);
+						stock.theTank.tryFill(tank, 100 * this.augmentUpdateTicks, false);
 					}
 				}
 			}

@@ -51,7 +51,7 @@ public class Config {
 
 		@Comment( "Enable environmental damage of Boiler Explosions")
 		public static boolean explosionEnvDamageEnabled = true;
-		
+
 		@Comment( "km/h to damage 1 heart on collision" )
 		public static double entitySpeedDamage = 10;
 
@@ -69,14 +69,14 @@ public class Config {
 
 		@Comment("Drop snowballs when the train can't push a block out of the way")
 		public static boolean dropSnowBalls = false;
-		
+
 		@Comment("Trains getContents destroyed by Mob explosions")
 		public static boolean trainMobExplosionDamage = true;
 	}
 
 	@Name("balance")
 	public static class ConfigBalance {
-		
+
 		@Comment("Models require fuel")
 		public static boolean ModelFuelRequired = true;
 
@@ -85,13 +85,13 @@ public class Config {
 
 		@Comment("Slope Multiplier: Higher numbers increase slowdown, lower numbers decrease slowdown")
 		public static double slopeMultiplier = 1.0;
-		
+
 		@Comment("Brake Multiplier: Higher numbers increase slowdown, lower numbers decrease slowdown")
 		public static double brakeMultiplier = 1.0;
-		
+
 		@Comment("Traction Multiplier: Higher numbers decreases wheel slip, lower numders increase wheel slip")
 		public static double tractionMultiplier = 1.0;
-		
+
 		@Comment( "How heavy is a single block in Kg" )
 		public static int blockWeight = 10;
 
@@ -109,16 +109,16 @@ public class Config {
 
 		@Comment("If more than X% of the tracks are above non solid block, break the track")
 		public static double trackFloatingPercent = 0.05;
-		
+
 		@Comment("Diesel Fuel Efficiency")
 		public static int locoDieselFuelEfficiency = 100;
-		
+
 		@Comment("Steam Fuel Efficiency")
 		public static int locoSteamFuelEfficiency = 100;
 
 		@Comment("How fast the steam locomotive should heat up.  1 is real internal (slow), 72 is scaled to minecraft time")
 		public static int locoHeatTimeScale = 72;
-		
+
 		@Comment("How fast the diesel locomotive should heat up. 1 is real internal (slow), 72 is scaled to minecraft time")
 		public static int dieselLocoHeatTimeScale = 72;
 
@@ -130,13 +130,13 @@ public class Config {
 
 		@Comment("Distance the villagers will hear the conductor's whistle")
 		public static double villagerConductorDistance = 50;
-		
+
 		@Comment("Villager payout items (ore dict)")
 		public static Fuzzy[] villagerPayoutItems = new Fuzzy[] {
 				Fuzzy.EMERALD
 		};
-		
-		@Comment("Fuels for diesel Locomotives" + 
+
+		@Comment("Fuels for diesel Locomotives" +
 				"\nNote: Naphtha of Thermal Foundation is internally registered as 'refined oil'.")
 		public static Map<String, Integer> dieselFuels = new HashMap<>();
 
@@ -150,20 +150,20 @@ public class Config {
 
 		@Comment("Allow diesel locomotive engine overheating")
 		public static boolean canDieselEnginesOverheat = true;
-		
+
 		public static List<ItemStack> getVillagerPayout() {
 			return Arrays.stream(villagerPayoutItems).map(f -> f.example()).collect(Collectors.toList());
 		}
-		
+
 		@Comment("Only select Locomotives with suitable equipment can be radio-controlled")
 		public static boolean RadioEquipmentRequired = true;
-		
+
 		@Comment("Range of radio-control, positive integer")
 		public static int RadioRange = 500;
-		
+
 		@Comment("IEnergy cost (RF) per radio transmission per metre")
 		public static int RadioCostPerMetre = 0;
-		
+
 		@Comment("Prevent stock from being built outside the recommended and model gauges")
 		public static boolean DesignGaugeLock = false;
 
@@ -174,12 +174,27 @@ public class Config {
 	@Name("performance")
 	public static class ConfigPerformance {
 		@Comment("Use multiple threads when loading stock. This is used on Minecraft's initial load or when manually reloading stocks.")
-		public static boolean multithreadedStockLoading = true;
+        public static boolean multithreadedStockLoading = true;
+
+        @Comment("How often to update item transfer augments. 1 = Every Tick, 5 = Every 5 Ticks")
+        public static int itemAugmentUpdateTicks = 5;
+
+        @Comment("How often to update fluid transfer augments. 1 = Every Tick, 5 = Every 5 Ticks")
+        public static int fluidAugmentUpdateTicks = 5;
+
+        @Comment("How often to update locomotive control augments. 1 = Every Tick, 5 = Every 5 Ticks")
+        public static int controlAugmentUpdateTicks = 1;
+
+        @Comment("How often to update detector augments. 1 = Every Tick, 5 = Every 5 Ticks")
+        public static int detectorAugmentUpdateTicks = 2;
+
+        @Comment("How often to update coupler augments. 1 = Every Tick, 5 = Every 5 Ticks")
+		public static int couplerAugmentUpdateTicks = 5;
 	}
 
 	@Name("debug")
 	public static class ConfigDebug {
-		
+
 		@Comment( "Speed up IR stock server onTick stepping to compensate for tps lag" )
 		public static boolean serverTickCompensation = false;
 
@@ -203,7 +218,7 @@ public class Config {
 
 		@Comment("Time between open computers poll ticks for augments")
 		public static int ocPollDelayTicks = 1;
-		
+
 		@Comment("DEV ONLY: How much to artifically lag the server (per internal)")
 		public static int lagServer = 0;
 
