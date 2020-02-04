@@ -95,26 +95,29 @@ public class TileRailBase extends BlockEntityTrackTickable implements IRedstoneP
 		this.augment = augment;
         setAugmentFilter(null);
 
-		switch (this.augment) {
-		case DETECTOR:
-			this.augmentUpdateTicks = ConfigPerformance.detectorAugmentUpdateTicks;
-        case FLUID_LOADER:
-            this.augmentUpdateTicks = ConfigPerformance.fluidAugmentUpdateTicks;
-        case FLUID_UNLOADER:
-            this.augmentUpdateTicks = ConfigPerformance.fluidAugmentUpdateTicks;
-        case WATER_TROUGH:
-			this.augmentUpdateTicks = ConfigPerformance.fluidAugmentUpdateTicks;
-        case ITEM_LOADER:
-            this.augmentUpdateTicks = ConfigPerformance.itemAugmentUpdateTicks;
-		case ITEM_UNLOADER:
-			this.augmentUpdateTicks = ConfigPerformance.itemAugmentUpdateTicks;
-		case LOCO_CONTROL:
-			this.augmentUpdateTicks = ConfigPerformance.controlAugmentUpdateTicks;
-		case COUPLER:
-            this.augmentUpdateTicks = ConfigPerformance.couplerAugmentUpdateTicks;
-        default:
-            this.augmentUpdateTicks = 1;
-		}
+        if (this.augment != null)
+        {
+            switch (this.augment) {
+            case DETECTOR:
+                this.augmentUpdateTicks = ConfigPerformance.detectorAugmentUpdateTicks;
+            case FLUID_LOADER:
+                this.augmentUpdateTicks = ConfigPerformance.fluidAugmentUpdateTicks;
+            case FLUID_UNLOADER:
+                this.augmentUpdateTicks = ConfigPerformance.fluidAugmentUpdateTicks;
+            case WATER_TROUGH:
+                this.augmentUpdateTicks = ConfigPerformance.fluidAugmentUpdateTicks;
+            case ITEM_LOADER:
+                this.augmentUpdateTicks = ConfigPerformance.itemAugmentUpdateTicks;
+            case ITEM_UNLOADER:
+                this.augmentUpdateTicks = ConfigPerformance.itemAugmentUpdateTicks;
+            case LOCO_CONTROL:
+                this.augmentUpdateTicks = ConfigPerformance.controlAugmentUpdateTicks;
+            case COUPLER:
+                this.augmentUpdateTicks = ConfigPerformance.couplerAugmentUpdateTicks;
+            default:
+                this.augmentUpdateTicks = 1;
+            }
+        }
 
 		this.markDirty();
 	}
