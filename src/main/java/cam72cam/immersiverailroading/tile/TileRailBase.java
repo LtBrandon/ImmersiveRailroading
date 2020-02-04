@@ -248,7 +248,7 @@ public class TileRailBase extends BlockEntityTrackTickable implements IRedstoneP
 		}
 
 		if (nbt.hasKey("augment")) {
-			augment = Augment.values()[nbt.getInteger("augment")];
+			setAugment(Augment.values()[nbt.getInteger("augment")]);
 		}
 
 		parent = nbt.getVec3i("parent");
