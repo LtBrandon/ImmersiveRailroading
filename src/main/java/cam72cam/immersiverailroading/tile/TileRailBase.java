@@ -464,14 +464,16 @@ public class TileRailBase extends BlockEntityTrackTickable implements IRedstoneP
 	 */
 
 	private Vec3d stockCheckPos;
+	private Vec3d stockCheckPos2;
     public <T extends EntityRollingStock> T getStockNearBy(Class<T> type) {
         if (stockCheckPos == null) {
             stockCheckPos = new Vec3d(this.pos.up(2));
+            stockCheckPos2 = new Vec3d(this.pos.up(3));
         }
 
 		return world.getEntities((T stock) -> {
 			if (augmentFilterID == null || augmentFilterID.equals(stock.getDefinitionID())) {
-				return stock.getBounds().contains(stockCheckPos);
+				return stock.getBounds().contains(stockCheckPos) || stock.getBounds().contains(stockCheckPos2);
 			}
 			return false;
 		}, type).stream().findFirst().orElse(null);
