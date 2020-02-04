@@ -87,16 +87,13 @@ public class TileRailBase extends BlockEntityTrackTickable implements IRedstoneP
 	public void setRailHeight(float height) {
 		this.railHeight = height;
 	}
-	public float getRailHeight() {
-		return this.railHeight;
-	}
 
-	public void setAugment(Augment augment) {
-		this.augment = augment;
-        setAugmentFilter(null);
+    public float getRailHeight() {
+        return this.railHeight;
+    }
 
-        if (this.augment != null)
-        {
+    public void updateAugmentUpdateTicks() {
+        if (this.augment != null) {
             switch (this.augment) {
             case DETECTOR:
                 this.augmentUpdateTicks = ConfigPerformance.detectorAugmentUpdateTicks;
@@ -118,9 +115,15 @@ public class TileRailBase extends BlockEntityTrackTickable implements IRedstoneP
                 this.augmentUpdateTicks = 1;
             }
         }
+    }
 
-		this.markDirty();
-	}
+    public void setAugment(Augment augment) {
+        this.augment = augment;
+        setAugmentFilter(null);
+        updateAugmentUpdateTicks();
+        this.markDirty();
+    }
+
 	public boolean setAugmentFilter(String definitionID) {
 		if (definitionID != null && !definitionID.equals(augmentFilterID)) {
 			this.augmentFilterID = definitionID;
@@ -248,7 +251,8 @@ public class TileRailBase extends BlockEntityTrackTickable implements IRedstoneP
 		}
 
 		if (nbt.hasKey("augment")) {
-			setAugment(Augment.values()[nbt.getInteger("augment")]);
+            augment = Augment.values()[nbt.getInteger("augment")];
+            updateAugmentUpdateTicks();
 		}
 
 		parent = nbt.getVec3i("parent");
